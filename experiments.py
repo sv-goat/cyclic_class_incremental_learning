@@ -55,13 +55,13 @@ if __name__ == '__main__':
     learning_rate_iter = [1e-3, 1e-4, 1e-5, 1e-6]
     num_samples_iter = [32, 64, 128, 256, 512]
 
-    save_path = "results.csv"
 
     for num_samples in num_samples_iter:
         for num_classes in num_classes_iter:
             for lr in learning_rate_iter:
                 print("Starting experiment with the following parameters")
                 print(num_samples, num_classes, lr)
+                save_path = "results" + str(num_samples) + "_" + str(num_classes) + "_" + str(lr) + ".csv"
                 loss = training_loop(input_size, num_classes, class_wise_data, class_dataloaders_test, save_path, lr = lr, num_samples = num_samples)
 
 
