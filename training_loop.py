@@ -76,8 +76,8 @@ def training_loop(input_size, num_classes, class_wise_data, class_dataloaders_te
                         post_cycle_accs[cla_test] = accuracy
                         # Write the results to as a csv
                         writer.writerow([cycle + 1, post_cycle_accs, cla_test, num_classes, lr, num_samples])
-            if cycle % 500 == 0:
-                print(f"{cycle+1}, {post_cycle_accs} for class {cla_test}")
+                if cycle % 500 == 0:
+                    print(f"{cycle+1}, {post_cycle_accs} for class {cla_test}")
             # Clear memory
             torch.cuda.empty_cache()
             del inputs, labels, outputs
