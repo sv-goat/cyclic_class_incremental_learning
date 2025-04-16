@@ -32,7 +32,7 @@ if __name__ == '__main__':
     num_classes_iter = [i+1 for i in range(1, 10)]
     learning_rate_iter = [1e-3, 1e-4, 1e-5, 1e-6]
 
-    save_path = "results.csv"
+    save_path = "results_baseline.csv"
     with open(save_path, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(["Accuracy", "Num classes", "Learning rate"])  # header row
