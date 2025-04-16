@@ -15,7 +15,7 @@ def training_loop_baseline(
     test_dataloader: DataLoader,
     save_path: str,
     lr: float = 0.001,
-    epochs: int = 5000,
+    epochs: int = 1000,
     patience: int = 5,
 ) -> None:
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

@@ -38,9 +38,9 @@ if __name__ == '__main__':
     test_dataloader = DataLoader(test_dataset, batch_size=256, shuffle=False)
 
     num_classes_iter = [i+1 for i in range(1, 10)]
-    learning_rate_iter = [1e-3, 1e-4, 1e-5, 1e-6]
+    learning_rate_iter = [1e-4]
 
-    save_path = "results_baseline.csv"
+    save_path = "results_baseline_2.csv"
     with open(save_path, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(["Accuracy", "Num classes", "Learning rate"])  # header row
