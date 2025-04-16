@@ -23,11 +23,19 @@ if __name__ == '__main__':
     print("Input size", input_size)
     print("Number of classes", num_classes)
 
-    # Create test dataloader
-    test_dataloader = DataLoader(TensorDataset(torch.stack([torch.FloatTensor(item[0]) for item in x_test]),
-                                               torch.LongTensor([item[1] for item in y_test])), batch_size=256, shuffle=True)
-    train_dataloader = DataLoader(TensorDataset(torch.stack([torch.FloatTensor(item[0]) for item in x]),
-                                               torch.LongTensor([item[1] for item in y])), batch_size=256, shuffle=True)
+    # Convert to tensors
+    x_train_tensor = torch.FloatTensor(np.stack([item[0] for item in x]))
+    y_train_tensor = torch.LongTensor([item[1] for item in y])
+    x_test_tensor = torch.FloatTensor(np.stack([item[0] for item in x_test]))
+    y_test_tensor = torch.LongTensor([item[1] for item in y_test])
+
+    # Create datasets
+    train_dataset = TensorDataset(x_train_tensor, y_train_tensor)
+    test_dataset = TensorDataset(x_test_tensor, y_test_tensor)
+
+    # Create dataloaders
+    train_dataloader = DataLoader(train_dataset, batch_size=256, shuffle=True)
+    test_dataloader = DataLoader(test_dataset, batch_size=256, shuffle=False)
 
     num_classes_iter = [i+1 for i in range(1, 10)]
     learning_rate_iter = [1e-3, 1e-4, 1e-5, 1e-6]
