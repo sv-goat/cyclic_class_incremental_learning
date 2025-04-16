@@ -24,10 +24,10 @@ if __name__ == '__main__':
     print("Number of classes", num_classes)
 
     # Convert to tensors
-    x_train_tensor = torch.FloatTensor(np.stack([item[0] for item in x]))
-    y_train_tensor = torch.LongTensor([item[1] for item in y])
-    x_test_tensor = torch.FloatTensor(np.stack([item[0] for item in x_test]))
-    y_test_tensor = torch.LongTensor([item[1] for item in y_test])
+    x_train_tensor = torch.FloatTensor(x)
+    y_train_tensor = torch.LongTensor(y)
+    x_test_tensor = torch.FloatTensor(x_test)
+    y_test_tensor = torch.LongTensor(y_test)
 
     # Create datasets
     train_dataset = TensorDataset(x_train_tensor, y_train_tensor)
@@ -46,7 +46,34 @@ if __name__ == '__main__':
         writer.writerow(["Accuracy", "Num classes", "Learning rate"])  # header row
     del f
     for num_classes in num_classes_iter:
+        # Filter data for current number of classes
+        train_mask = y_train_tensor < num_classes
+        test_mask = y_test_tensor < num_classes
+        
+        # Create filtered datasets
+        filtered_train_dataset = TensorDataset(
+            x_train_tensor[train_mask],
+            y_train_tensor[train_mask]
+        )
+        filtered_test_dataset = TensorDataset(
+            x_test_tensor[test_mask],
+            y_test_tensor[test_mask]
+        )
+        
+        # Create filtered dataloaders
+        filtered_train_dataloader = DataLoader(filtered_train_dataset, batch_size=256, shuffle=True)
+        filtered_test_dataloader = DataLoader(filtered_test_dataset, batch_size=256, shuffle=False)
+        
         for lr in learning_rate_iter:
-            print("Starting experiment with the following parameters")
-            print(num_classes, lr)
-            training_loop_baseline(input_size, num_classes, train_dataloader, test_dataloader, save_path, lr = lr)
+            print(f"\nStarting experiment with num_classes={num_classes}, lr={lr}")
+            print(f"Training samples: {len(filtered_train_dataset)}")
+            print(f"Test samples: {len(filtered_test_dataset)}")
+            
+            training_loop_baseline(
+                input_size=input_size,
+                num_classes=num_classes,
+                train_dataloader=filtered_train_dataloader,
+                test_dataloader=filtered_test_dataloader,
+                save_path=save_path,
+                lr=lr
+            )
