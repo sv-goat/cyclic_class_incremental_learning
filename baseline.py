@@ -40,7 +40,7 @@ if __name__ == '__main__':
     num_classes_iter = [i+1 for i in range(1, 10)]
     learning_rate_iter = [1e-4]
 
-    save_path = "results_baseline_2.csv"
+    save_path = "results_baseline_5.csv"
     with open(save_path, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(["Accuracy", "Num classes", "Learning rate"])  # header row
@@ -63,8 +63,11 @@ if __name__ == '__main__':
         # Create filtered dataloaders
         filtered_train_dataloader = DataLoader(filtered_train_dataset, batch_size=256, shuffle=True)
         filtered_test_dataloader = DataLoader(filtered_test_dataset, batch_size=256, shuffle=False)
-        
-        for lr in learning_rate_iter:
+
+        lr = 1e-4
+        num_iters = 5
+
+        for i in range(num_iters):
             print(f"\nStarting experiment with num_classes={num_classes}, lr={lr}")
             print(f"Training samples: {len(filtered_train_dataset)}")
             print(f"Test samples: {len(filtered_test_dataset)}")
