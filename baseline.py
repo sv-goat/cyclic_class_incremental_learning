@@ -68,7 +68,7 @@ if __name__ == '__main__':
             test_datasets = []  # List to hold datasets for each class
             for i in range(num_classes):
                 # Assuming train_data has a method to get targets
-                class_indices = [idx for idx, target in enumerate(test_dataset.targets) if target == i]
+                class_indices = [idx for idx, target in enumerate(test_dataset.tensors[1]) if target == i]
 
                 # Sample 1024 points randomly
                 random.shuffle(class_indices)

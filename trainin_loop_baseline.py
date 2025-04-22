@@ -33,8 +33,11 @@ def training_loop_baseline(
 
     # Convert dataset object into iterable
     # Split train data into train adn validation data
-    train_data, validation_data = torch.utils.data.random_split(train_data, [int(len(train_data) * 0.8), int(len(train_data) * 0.2)])
-    validation_dataloader = DataLoader(validation_data, batch_size=64, shuffle=False)
+    new_train_size = int(len(train_data) * 0.8)
+    train_data, validation_data = torch.utils.data.random_split(train_data, [new_train_size, len(train_data) - new_train_size])
+    train_dataloader = DataLoader(train_data, batch_size = 64, shuffle = False)
+    validation_dataloader = DataLoader(validation_data, batch_size=64, shuffle=True)
+    train_data = train_dataloader.dataset
 
     with open(save_path, 'a', newline='') as f:
         writer = csv.writer(f)
@@ -48,7 +51,7 @@ def training_loop_baseline(
             class_datasets = []  # List to hold datasets for each class
             for i in range(num_classes):
                 # Assuming train_data has a method to get targets
-                class_indices = [idx for idx, target in enumerate(train_data.targets) if target == i]
+                class_indices = [idx for idx, target in enumerate(train_data.tensors[1]) if target == i]
 
                 # Sample 1024 points randomly
                 random.shuffle(class_indices)
