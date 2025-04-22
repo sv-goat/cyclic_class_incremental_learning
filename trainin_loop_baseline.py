@@ -35,9 +35,12 @@ def training_loop_baseline(
     # Split train data into train adn validation data
     new_train_size = int(len(train_data) * 0.8)
     train_data, validation_data = torch.utils.data.random_split(train_data, [new_train_size, len(train_data) - new_train_size])
-    train_dataloader = DataLoader(train_data, batch_size = 64, shuffle = False)
     validation_dataloader = DataLoader(validation_data, batch_size=64, shuffle=True)
-    train_data = train_dataloader.dataset
+
+    # Make a tensor dataset
+    indices = train_data.indices
+    original_dataset = train_data.dataset
+    train_data = TensorDataset(original_dataset.tensors[0][indices], original_dataset.tensors[1][indices])
 
     with open(save_path, 'a', newline='') as f:
         writer = csv.writer(f)
