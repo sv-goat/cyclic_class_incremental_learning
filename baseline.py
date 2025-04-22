@@ -40,34 +40,51 @@ if __name__ == '__main__':
     num_classes_iter = [i+1 for i in range(1, 10)]
     learning_rate_iter = [1e-4]
 
-    save_path = "results_baseline_5.csv"
+    save_path = "results_baseline_5k.csv"
     with open(save_path, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(["Accuracy", "Num classes", "Learning rate"])  # header row
     del f
     for num_classes in num_classes_iter:
         # Filter data for current number of classes
+        # Limit to 100 samples per class in testing.
         train_mask = y_train_tensor < num_classes
-        test_mask = y_test_tensor < num_classes
         
         # Create filtered datasets
         filtered_train_dataset = TensorDataset(
             x_train_tensor[train_mask],
             y_train_tensor[train_mask]
         )
-        filtered_test_dataset = TensorDataset(
-            x_test_tensor[test_mask],
-            y_test_tensor[test_mask]
-        )
         
         # Create filtered dataloaders
-        filtered_train_dataloader = DataLoader(filtered_train_dataset, batch_size=256, shuffle=True)
-        filtered_test_dataloader = DataLoader(filtered_test_dataset, batch_size=256, shuffle=False)
+        filtered_train_dataloader = DataLoader(filtered_train_dataset, batch_size=64, shuffle=True)
 
         lr = 1e-4
         num_iters = 5
 
         for i in range(num_iters):
+
+            # Limit to 100 samples per class in testing.
+            test_datasets = []  # List to hold datasets for each class
+            for i in range(num_classes):
+                # Assuming train_data has a method to get targets
+                class_indices = [idx for idx, target in enumerate(test_dataset.targets) if target == i]
+
+                # Sample 1024 points randomly
+                random.shuffle(class_indices)
+                sampled_indices = class_indices[:100]
+
+                class_dataset = Subset(test_dataset, sampled_indices)
+                test_datasets.append(class_dataset)
+
+
+            filtered_test_dataset = ConcatDataset(test_datasets)
+
+            filtered_test_dataloader = DataLoader(filtered_test_dataset, batch_size=64, shuffle=False)
+
+
+
+
             print(f"\nStarting experiment with num_classes={num_classes}, lr={lr}")
             print(f"Training samples: {len(filtered_train_dataset)}")
             print(f"Test samples: {len(filtered_test_dataset)}")
