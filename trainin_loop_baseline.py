@@ -7,6 +7,7 @@ from class_incremental_model import ClassIncrementalModel
 from torch.utils.data import TensorDataset
 import csv
 import random
+import os
 
 def training_loop_baseline(
     input_size: int,
@@ -16,7 +17,7 @@ def training_loop_baseline(
     save_path: str,
     lr: float = 0.001,
     epochs: int = 5000,
-    patience: int = 5,
+    patience: int = 200,
 ) -> None:
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = ClassIncrementalModel(input_size, num_classes).to(device)
@@ -41,6 +42,8 @@ def training_loop_baseline(
     indices = train_data.indices
     original_dataset = train_data.dataset
     train_data = TensorDataset(original_dataset.tensors[0][indices], original_dataset.tensors[1][indices])
+    print("Length of train data", len(train_data))
+
 
     with open(save_path, 'a', newline='') as f:
         writer = csv.writer(f)
@@ -65,6 +68,7 @@ def training_loop_baseline(
 
             # Create the final dataloader
             train_dataloader = DataLoader(ConcatDataset(class_datasets), batch_size=64, shuffle=True)
+            print("Length of train dataloadder", len(train_dataloader))
             epoch_loss = 0
             model.train()
             for inputs, labels in train_dataloader:
@@ -98,10 +102,10 @@ def training_loop_baseline(
 
                 val_loss /= len(validation_dataloader)
                 accuracy = 100 * correct / total
-                print(f"Validation accuracy: {accuracy}")
                 if val_loss < best_loss:
                     best_loss = val_loss
                     patience_counter = 0
+                    print("New best loss", best_loss)
                     torch.save(model.state_dict(), "best_model.pt")
                 else:
                     patience_counter += 1
